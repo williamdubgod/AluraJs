@@ -8,18 +8,22 @@ export class NegociacaoController {
     private inputQuantidade: HTMLInputElement;
     private inputValor: HTMLInputElement;
     private negociacoes = new Negociacoes();
-    private negociacoesView = new NegociacoesView('#negociacoesView');
+    private negociacoesView = new NegociacoesView('#negociacoesView', true);
     private mensagemView = new MensagemView('#mensagemView');
 
     constructor() {
-        this.inputData = document.querySelector("#data");
-        this.inputQuantidade = document.querySelector("#quantidade")
-        this.inputValor = document.querySelector("#valor")
+        this.inputData = document.querySelector("#data") as HTMLInputElement;
+        this.inputQuantidade = document.querySelector("#quantidade") as HTMLInputElement;
+        this.inputValor = document.querySelector("#valor") as HTMLInputElement;
         this.negociacoesView.update(this.negociacoes);
     }
 
     public adiciona(): void {
-        const negociacao = this.criaNegociacao();
+        const negociacao = Negociacao.criaDe(
+            this.inputData.value,
+            this.inputQuantidade.value,
+            this.inputValor.value
+        );
         if (negociacao.data.getDay() > 0 && negociacao.data.getDay() < 6) {
             this.negociacoes.adiciona(negociacao);
             this.limpaFormulario();
@@ -29,13 +33,6 @@ export class NegociacaoController {
         }
         const negociacoes = this.negociacoes.lista();
         this.inputData.focus();
-    }
-    private criaNegociacao(): Negociacao {
-        const exp = /-/g;
-        const date = new Date(this.inputData.value.replace(exp, ','));
-        const quantidade = parseInt(this.inputQuantidade.value);
-        const valor = parseFloat(this.inputValor.value);
-        return new Negociacao(date, quantidade, valor); 
     }
 
     private limpaFormulario(): void {
